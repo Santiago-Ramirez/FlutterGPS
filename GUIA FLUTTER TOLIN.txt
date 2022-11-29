@@ -1,0 +1,96 @@
+equatable se proncuncia equerabol esto es para saber cuando el estado cambia 
+
+bloc: ^8.0.1
+equatable: ^2.0.3
+
+instalar plugin blc
+
+*********************************************
+GPS_STATE.DART
+
+el estado en gps_state es inmutable y se puede poner final 
+el estado que cambia no va ser la clase que cambia si no va ser una nueva clase 
+cada vez que cambie el estado sera una nueva clase 
+como estas propiedades
+  final bool isGpsEnabled;
+  final bool isGpsPermissionGranted;
+van a determinar si esta en true o falsse pero despues emito otro evento que tambien esta en true me disparara un estado que ambas propiedades son iguales a true entonces realmente es el mismo estado y eso determina flutter bloc cuando sera un redibujo o no, pero si lo dejamos asi cada vez que se cree una instancia de mi GPS siempre sera una instancia nueva, para evitar todo eso es conveniente pasarle estas propiedades dentro de mi lista de objeto de props las metemos en este override
+
+en el metodo tostring serializamos los valores para formarlos en json y poder depurar bien los valores de las variables y saber su valor sin equivocación
+
+se agrego el gpstate copywith() para copiar el estado y mantenerlo como se quedo y no se cree uno nuevo para que no se reseeten los valores la funcion flecha es un return implicito 
+
+ isGpsPermissionGranted ?? this.isGpsPermissionGranted
+
+si no mandamos un valor ponme el mismo que tiene anteriormente 
+*************************************************************
+GPS_BLOC.DART
+
+se quita el initial y se pone gpstate y se envian los parametros ya que son requeridos forzosamente y los mandamos en true
+**********************************************************
+MAIN.DART
+
+en el main el multiblockprovider recibe un arreglo de providers,
+    providers: [BlocProvider(create: (context) => GpsBloc())],
+esto me va a permitir ami crear una instancia de mi GpsBloc 
+donde se tendra acceso al estado a emitir eventos etc.. 
+en el child se declara un BlocBuilder y te pide el bloc le pasamos nuestro bloc que es GPSbloc e importamos su libreria esta en false, con el operador ternario
+
+se creo un par de metodos, un par de metodos que permita inicializar el servicio o el string de infromación que vendra proveniente den geolocator 
+***********************************************************
+GEOLOCATOR ANDROID
+
+https://pub.dev/packages/permission_handler
+
+
+
+
+
+
+
+*********************************************************
+PERMISOS PARA LA GEOLOCALIZACIÓN EN ANDROID Y IOS
+
+Add a permission to Android Manifest:
+
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+Add permissions to iOS Info.plist
+
+<key>NSLocationAlwaysUsageDescription</key>
+<string>Needed to access location</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Needed to access location</string>
+**************************************************************
+Cambiar el estado basado en el estado del servicio
+
+GPS BLOC LINEA 14 PUNTO DEBUGEADOR PERMISO CONCEDIDO Y PERMISO DENEGADO NO HACE CAMBIO DE ESTADO SE QUEDA DONDE MISMO CON ESO CONFIRMAS EL CAMBIO DE ESTADO BASADO EN EL ESTADO DEL SERVICIO
+
+Despachar eventos, cuando caiga un evento en GpsAndPermissionsEvent de tipo GpsAndPermissionsEvent aqui es donde vamos a tener centralizada como es que cambia nuestro estado o como cambia nuestro estado 
+
+  Future<void> close() {
+    gpsServicesSuscripcion?.cancel();
+    return super.close();
+  }
+
+si hay un valor cancelamelo si no no hagas nada, esto es genial del nullsafety
+***************************************************************
+***Permission Handler
+
+https://pub.dev/packages/permission_handler
+
+se creo un metodo llamado askGpsAccess utilizando handler
+
+***Solicitar acceso al GPS
+
+se creo un metodo llamado askGpsAccess utilizando handler
+
+este metodo   openAppSettings(); ya viene en el paquete de handler
+**************************************************************
+Revisar privilegios previamente otorgados
+
+
+
+
+
